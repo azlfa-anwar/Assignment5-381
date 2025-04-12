@@ -3,7 +3,7 @@ import Header from './Header';
 import Footer from './Footer';
 import CourseItem from './CourseItem';
 import EnrollmentList from './EnrollmentList';
-import courses from '../data/courses';
+import courses from '../backend/courses';
 
 const CoursesPage = () => {
   const [enrolledCourses, setEnrolledCourses] = useState(() => {

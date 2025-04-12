@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
-import courses from '../data/courses';
-import testimonials from '../data/testimonials';
+import courses from '../backend/courses';
+import testimonials from '../backend/testimonials';
 
 const Homepage = () => {
   const [featuredCourses, setFeaturedCourses] = useState([]);
