@@ -5,9 +5,34 @@ import RegForm from './RegForm';
 
 const SignupPage = () => {
   return(
-    <div>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
       <Header />
-      <RegForm />
+      <main style={{
+        flex: 1,
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        padding: '20px'
+      }}>
+        <div style={{
+          width: '100%', 
+          maxWidth: '400px', 
+          margin: '0 auto'
+        }}>
+          <h2 style={{
+            textAlign: 'center', 
+            color: '#004080', 
+            marginBottom: '30px' 
+          }}>
+            Create LMS Account
+          </h2>
+          <RegForm />
+        </div>
+      </main>
       <Footer />
     </div>
   );

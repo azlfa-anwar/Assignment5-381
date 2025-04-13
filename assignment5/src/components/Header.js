@@ -20,6 +20,7 @@ const Header = () => {
       <nav className={styles.nav}>
         <Link to="/" className={styles.navLink}>Home</Link>
         <Link to="/courses" className={styles.navLink}>Courses</Link>
+        <Link to="/signup" className={styles.navLink}>Sign Up</Link>
         {isLoggedIn ? (
           <button onClick={logout} className={styles.logoutButton}>
             Logout

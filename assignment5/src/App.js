@@ -4,6 +4,7 @@ import { useAuth } from './context/AuthContext';
 import Homepage from './components/Homepage';
 import CoursesPage from './components/CoursesPage';
 import LoginPage from './components/LoginPage';
+import SignupPage from './components/SignupPage';
 
 const ProtectedRoute = ({ children }) => {
   const { isLoggedIn } = useAuth();
@@ -21,6 +22,7 @@ function App() {
             path="/courses" 
             element={<ProtectedRoute><CoursesPage /></ProtectedRoute>} 
           />
+          <Route path="/signup" element={<SignupPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
