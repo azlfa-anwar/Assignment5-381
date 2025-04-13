@@ -6,7 +6,8 @@ import json
 import random
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+
 
 students = [
     {
@@ -88,3 +89,37 @@ def enroll_course(student_id):
             return jsonify({"message": f"Enrolled in course {course_id} successfully."}), 200
 
     return jsonify({"message": "Student not found."}), 404
+
+@app.route('/api/drop/<int:student_id>', methods=['DELETE'])
+def drop_course(student_id):
+    data = request.get_json()
+    course_id = data.get("course_id")
+
+    for student in students:
+        if student["id"] == student_id:
+            if course_id in student["enrolled_courses"]:
+                student["enrolled_courses"].remove(course_id)  # ✅ Remove it
+                return jsonify({"message": f"Dropped course {course_id} successfully."}), 200
+            else:
+                return jsonify({"message": "Student is not enrolled in this course."}), 400
+
+    return jsonify({"message": "Student not found."}), 404
+
+
+@app.route('/api/courses', methods=['GET'])
+def get_courses():
+    try:
+        with open('courses.json') as f:
+            course_list = json.load(f)
+        return jsonify(course_list), 200
+    except Exception as e:
+        return jsonify({"message": "Failed to load courses", "error": str(e)}), 500
+@app.route('/api/student_courses/<int:student_id>', methods=['GET'])
+def get_student_courses(student_id):
+    for student in students:
+        if student["id"] == student_id:
+            return jsonify(student["enrolled_courses"]), 200
+    return jsonify([]), 200
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5001)

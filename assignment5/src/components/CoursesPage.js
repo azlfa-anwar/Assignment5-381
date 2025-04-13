@@ -8,23 +8,33 @@ import { useAuth } from '../context/AuthContext';
 const CoursesPage = () => {
   const { user } = useAuth();
   const [courses, setCourses] = useState([]);
-  const [enrolledCourses, setEnrolledCourses] = useState(() => {
-    const saved = localStorage.getItem('enrollments');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
 
-  // Fetch courses from backend
+  // Fetch all courses, then fetch enrolled courses once courses are loaded
   useEffect(() => {
-    fetch('http://localhost:5000/api/courses')
+    fetch('http://localhost:5001/api/courses')
       .then(res => res.json())
-      .then(data => setCourses(data))
-      .catch(err => console.error('Failed to fetch courses:', err));
-  }, []);
+      .then(data => {
+        setCourses(data);
 
-  // Save to localStorage
-  useEffect(() => {
-    localStorage.setItem('enrollments', JSON.stringify(enrolledCourses));
-  }, [enrolledCourses]);
+        // Fetch enrolled course IDs only after courses are loaded
+        if (user?.id) {
+          fetch(`http://localhost:5001/api/student_courses/${user.id}`)
+            .then(res => res.json())
+            .then(enrolledIds => {
+              const enriched = enrolledIds
+                .map(id => {
+                  const course = data.find(c => c.id === id);
+                  return course ? { ...course, enrollmentId: Date.now() + Math.random() } : null;
+                })
+                .filter(Boolean);
+              setEnrolledCourses(enriched);
+            })
+            .catch(err => console.error('Failed to fetch student courses:', err));
+        }
+      })
+      .catch(err => console.error('Failed to fetch courses:', err));
+  }, [user?.id]);
 
   const handleEnroll = async (course) => {
     if (!user || !user.id) {
@@ -33,7 +43,7 @@ const CoursesPage = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/enroll/${user.id}`, {
+      const response = await fetch(`http://localhost:5001/api/enroll/${user.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ course_id: course.id })
@@ -42,7 +52,7 @@ const CoursesPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setEnrolledCourses(prev => [...prev, { 
+        setEnrolledCourses(prev => [...prev, {
           ...course,
           enrollmentId: Date.now()
         }]);
@@ -56,10 +66,28 @@ const CoursesPage = () => {
     }
   };
 
-  const handleRemove = (enrollmentId) => {
-    setEnrolledCourses(prev =>
-      prev.filter(course => course.enrollmentId !== enrollmentId)
-    );
+  const handleRemove = async (course) => {
+    try {
+      const res = await fetch(`http://localhost:5001/api/drop/${user.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ course_id: course.id })
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        setEnrolledCourses(prev =>
+          prev.filter(c => c.id !== course.id)
+        );
+        alert(result.message);
+      } else {
+        alert(result.message);
+      }
+    } catch (err) {
+      console.error('Drop failed:', err);
+      alert('Failed to drop course. Try again.');
+    }
   };
 
   return (
