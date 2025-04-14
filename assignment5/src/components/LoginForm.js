@@ -25,7 +25,7 @@ const LoginForm = () => {
       const result = await res.json();
   
       if (res.ok) {
-        login(result.student); // store the user globally
+        login(result.student); // store user globally
         setTimeout(() => {
           navigate('/courses');
         }, 2000);

@@ -58,7 +58,7 @@ const RegForm = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:5001/api/register', {
+      const res = await fetch('http://localhost:5001/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -152,7 +152,8 @@ const RegForm = () => {
         <button 
           type="submit" 
           style={{
-            backgroundColor: '#008000',
+            backgroundColor: '#4CAF50',
+            opacity: '0.5',
             color: 'white',
             padding: '10px 20px',
             border: 'none',
@@ -161,10 +162,12 @@ const RegForm = () => {
             marginBottom: '15px'
           }}
           onMouseOver={(e) => {
-            e.target.style.backgroundColor = '#006600';
+            e.target.style.backgroundColor = '#45A049';
+            e.target.style.opacity = '1.0';
           }}
           onMouseOut={(e) => {
-            e.target.style.backgroundColor = '#008000';
+            e.target.style.backgroundColor = '#4CAF50';
+            e.target.style.opacity = '1.0';
           }}
         >
           Sign Up

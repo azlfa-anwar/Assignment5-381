@@ -6,7 +6,7 @@ import json
 import random
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 
 students = [
@@ -26,7 +26,7 @@ students = [
     }
 ]
 
-@app.route('/api/register', methods=['POST'])
+@app.route('/register', methods=['POST'])
 def register_student():
   data = request.get_json()
   username = data.get("username")
@@ -46,7 +46,7 @@ def register_student():
   students.append(new_student)
   return jsonify({"message": "Student registered successfully"}), 201
 
-@app.route('/api/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login_student():
     data = request.get_json()
     username = data.get("username")
@@ -67,7 +67,7 @@ def login_student():
             
     return jsonify({"message": "Invalid username or password."}), 401
   
-@app.route('/api/testimonials', methods=['GET'])
+@app.route('/testimonials', methods=['GET'])
 def get_testimonials():
     with open('testimonials.json') as f:
         all_testimonials = json.load(f)
@@ -75,7 +75,7 @@ def get_testimonials():
     random_testimonials = random.sample(all_testimonials, min(2, len(all_testimonials)))
     return jsonify(random_testimonials)
 
-@app.route('/api/enroll/<int:student_id>', methods=['POST'])
+@app.route('/enroll/<int:student_id>', methods=['POST'])
 def enroll_course(student_id):
     data = request.get_json()
     course_id = data.get("course_id")
@@ -90,7 +90,7 @@ def enroll_course(student_id):
 
     return jsonify({"message": "Student not found."}), 404
 
-@app.route('/api/drop/<int:student_id>', methods=['DELETE'])
+@app.route('/drop/<int:student_id>', methods=['DELETE'])
 def drop_course(student_id):
     data = request.get_json()
     course_id = data.get("course_id")
@@ -106,7 +106,7 @@ def drop_course(student_id):
     return jsonify({"message": "Student not found."}), 404
 
 
-@app.route('/api/courses', methods=['GET'])
+@app.route('/courses', methods=['GET'])
 def get_courses():
     try:
         with open('courses.json') as f:
@@ -114,7 +114,7 @@ def get_courses():
         return jsonify(course_list), 200
     except Exception as e:
         return jsonify({"message": "Failed to load courses", "error": str(e)}), 500
-@app.route('/api/student_courses/<int:student_id>', methods=['GET'])
+@app.route('/student_courses/<int:student_id>', methods=['GET'])
 def get_student_courses(student_id):
     for student in students:
         if student["id"] == student_id:
